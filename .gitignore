@@ -8,4 +8,11 @@
 *.pptx
 *.ods
 *.Rproj
-
+*.csv
+*.dbf
+*.prj
+*.shx
+*.shp
+*.json
+*.tif
+*.txt
