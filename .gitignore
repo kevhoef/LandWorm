@@ -15,4 +15,4 @@
 *.shp
 *.json
 *.tif
-*.txt
+*.cpg
