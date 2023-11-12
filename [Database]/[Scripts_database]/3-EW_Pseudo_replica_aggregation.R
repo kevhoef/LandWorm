@@ -16,7 +16,7 @@ Create_T_synth_rep <- function( data_VDT_input, nom_tab){
   data_VDT_input$Annee <- factor(data_VDT_input$Annee) 
   data_VDT_input$ID_Site <- factor(data_VDT_input$ID_Site) 
   data_VDT_input$Repetition <- factor(data_VDT_input$Repetition)  
-  data_VDT_input$Code_Taxon <- factor(data_VDT_input$Code_Taxon)  
+  data_VDT_input$Taxon <- factor(data_VDT_input$Taxon)  
 
   # Create an ID by pasting together the values of columns specified in Variable_Bandeau
   data_VDT_input <- data_VDT_input %>%
@@ -49,10 +49,10 @@ Create_T_synth_rep <- function( data_VDT_input, nom_tab){
   
 
   ####  Total_AB_by_Species  ##### 
-# If 'Code_Taxon' column exists
-if (!is.null(data_VDT_input$Code_Taxon)) {
+# If 'Taxon' column exists
+if (!is.null(data_VDT_input$Taxon)) {
   # Perform cross-tabulation
-  T_AB_ESP_CD <- xtabs(AB_cor ~ ID + Code_Taxon, data = data_VDT_input, na.action = na.pass)
+  T_AB_ESP_CD <- xtabs(AB_cor ~ ID + Taxon, data = data_VDT_input, na.action = na.pass)
   
   # Convert to data frame
   T_AB_ESP <- data.frame(matrix(T_AB_ESP_CD, ncol = ncol(T_AB_ESP_CD),
@@ -71,25 +71,25 @@ if (!is.null(data_VDT_input$Code_Taxon)) {
   # When Biomass (BM_cor) column is not present in the data
   if (is.null(data_VDT_input$BM_cor)) {
     
-    # Case: Both Stade and Code_Taxon columns are present
-    if (!is.null(data_VDT_input$Stade) & !is.null(data_VDT_input$Code_Taxon)) {
+    # Case: Both Stade and Taxon columns are present
+    if (!is.null(data_VDT_input$Stade) & !is.null(data_VDT_input$Taxon)) {
       T_synth_rep_output <- join_all(list(T_AB_tot, T_AB_STAD, T_AB_ESP),
                                      by = "ID")
     } 
     
-    # Case: Only Code_Taxon is present, and Stade is not
-    else if (!is.null(data_VDT_input$Code_Taxon)) {
+    # Case: Only Taxon is present, and Stade is not
+    else if (!is.null(data_VDT_input$Taxon)) {
       T_synth_rep_output <- join_all(list(T_AB_tot, T_AB_ESP),
                                      by = "ID")
     }
     
-    # Case: Only Stade is present, and Code_Taxon is not
+    # Case: Only Stade is present, and Taxon is not
     else if (!is.null(data_VDT_input$Stade)) {
       T_synth_rep_output <- join_all(list(T_AB_tot, T_AB_STAD),
                                      by = "ID")
     }
     
-    # Case: Neither Stade nor Code_Taxon is present
+    # Case: Neither Stade nor Taxon is present
     else {
       T_synth_rep_output <- join_all(list(T_AB_tot),
                                      by = "ID")
@@ -116,10 +116,10 @@ if (!is.null(data_VDT_input$Code_Taxon)) {
     #####  ------  ##### 
     #####  BM_ESP  ##### 
     #####  ------  #####  
-    # If the Code_Taxon column exists
-    if(is.null(data_VDT_input$Code_Taxon) == FALSE) {
+    # If the Taxon column exists
+    if(is.null(data_VDT_input$Taxon) == FALSE) {
       # Perform cross-tabulation
-      T_BM_ESP_CD <- xtabs(BM_cor ~ ID + Code_Taxon, data = data_VDT_input, na.action = na.pass)
+      T_BM_ESP_CD <- xtabs(BM_cor ~ ID + Taxon, data = data_VDT_input, na.action = na.pass)
       
       # Convert to data frame
       T_BM_ESP <- data.frame(matrix(T_BM_ESP_CD, ncol = ncol(T_BM_ESP_CD), 
@@ -136,22 +136,22 @@ if (!is.null(data_VDT_input$Code_Taxon)) {
     # Combine the tables to create a synthetic table of results by repetition
     ### -----------------------------------------------------------------------------------------  ###
     
-    # If both Stade and Code_Taxon columns exist
-    if (is.null(data_VDT_input$Stade) == FALSE & is.null(data_VDT_input$Code_Taxon) == FALSE) {
+    # If both Stade and Taxon columns exist
+    if (is.null(data_VDT_input$Stade) == FALSE & is.null(data_VDT_input$Taxon) == FALSE) {
       T_synth_rep_output <- join_all(list(T_AB_tot, T_BM_tot, T_AB_STAD, T_AB_ESP, T_BM_ESP), 
                                      by = "ID")
       
-      # If only Code_Taxon column exists and not Stade
-    } else if (is.null(data_VDT_input$Code_Taxon) == FALSE) {
+      # If only Taxon column exists and not Stade
+    } else if (is.null(data_VDT_input$Taxon) == FALSE) {
       T_synth_rep_output <- join_all(list(T_AB_tot, T_BM_tot, T_AB_ESP, T_BM_ESP), 
                                      by = "ID")
       
-      # If only Stade column exists and not Code_Taxon
+      # If only Stade column exists and not Taxon
     } else if (is.null(data_VDT_input$Stade) == FALSE) {
       T_synth_rep_output <- join_all(list(T_AB_tot, T_BM_tot, T_AB_STAD), 
                                      by = "ID")
       
-      # If neither Stade nor Code_Taxon columns exist
+      # If neither Stade nor Taxon columns exist
     } else { 
       T_synth_rep_output <- join_all(list(T_AB_tot, T_BM_tot), by = "ID") 
     } 

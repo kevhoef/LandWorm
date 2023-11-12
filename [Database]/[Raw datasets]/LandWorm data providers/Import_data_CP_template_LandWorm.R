@@ -3,18 +3,22 @@ library(readxl)
 library(tidyverse)
 
 # Specify the path to your Excel file
-excel_file_path <- "[Database]/Raw datasets/cp_data_site.xlsx"
+excel_file_path <- "[Database]/[Raw datasets]/LandWorm data providers/cp_data_site.xlsx"
 
 # Read data from each sheet
 sheet_data_Study <- read_excel(excel_file_path, sheet = "5. data Study") %>%
-  rename(GPS_Y = gps_x,GPS_X = gps_y) %>%
+  dplyr::rename(GPS_Y = gps_x,GPS_X = gps_y) %>%
   mutate(ID_bloc = na_if(ID_bloc, "na")) %>%
   mutate(ID_modality = na_if(ID_modality, "na"))%>%
   mutate_all(~gsub(" ", "_", .))
 sheet_data_Land_use_management <- read_excel(excel_file_path, sheet = "7.data Land_use_management")%>%
   mutate(ID_bloc = na_if(ID_bloc, "na")) %>%
   mutate(ID_modality = na_if(ID_modality, "na"))%>%
-  mutate_all(~gsub(" ", "_", .))
+  mutate_all(~gsub(" ", "_", .))%>%
+  dplyr::rename(clcm_lvl1 =land_use_lvl1,
+         clcm_lvl2 = land_use_lvl2,
+         clcm_lvl3 = land_use_lvl3,
+         land_cover_detail = land_use_lvl4)
 sheet_data_Soil <- read_excel(excel_file_path, sheet = "9.data Soil")%>%
   mutate(ID_bloc = na_if(ID_bloc, "na")) %>%
   mutate(ID_modality = na_if(ID_modality, "na"))%>%
@@ -44,47 +48,47 @@ cp_rd_rep_site <- cp_rd_rep_site %>%
 levels(cp_rd_rep_site$EW_species)
 cp_rd_rep_site <- cp_rd_rep_site %>%
   mutate(EW_species = case_when(
-    EW_species == "A. chlorotica " ~ "AC",
-    EW_species == "A. cupulifera " ~ "ACU",
-    EW_species == "A. giardi " ~ "NG",
-    EW_species == "A. longa " ~ "NLX",
-    EW_species == "A. longa/giardi " ~ "NLX/NG",
-    EW_species == "A. muldali " ~ "AM",
-    EW_species == "A. muldali/rosea " ~ "AM/ARR",
-    EW_species == "A. rosea " ~ "ARR",
-    EW_species == "Allolobophora chlorotica" ~ "ACX",
-    EW_species == "Allolobophora muldali" ~ "AM", 
-    EW_species == "Anécique lumbricus " ~ "LX_A",
-    EW_species == "Aporrectodea caliginosa" ~ "NCX",
-    EW_species == "Aporrectodea giardi" ~ "NG",
-    EW_species == "Aporrectodea icterica" ~ "AI",
-    EW_species == "Aporrectodea longa" ~ "NLX",
-    EW_species == "Aporrectodea rosea" ~ "ARR",
-    EW_species == "D. mammalis " ~ "DM",
-    EW_species == "D. pygmea " ~ "DPC",
-    EW_species == "D. subrubicunda " ~ "DSS",
-    EW_species == "E. tetraedra " ~ "ET",
-    EW_species == "Eisenia " ~ "EX",
-    EW_species == "endoge indetermine " ~ "END",
-    EW_species == "L. castaneus " ~ "LC",
-    EW_species == "L. centralis " ~ "LCE",
-    EW_species == "L. friendi " ~ "LFR", 
-    EW_species == "L. friendi/centralis " ~ "LFR/LCE",
-    EW_species == "L. rubellus friendoides " ~ "LRFR",
-    EW_species == "L. rubellus rubellus " ~ "LRR",
-    EW_species == "Lumbricus castaneus" ~ "LC",
-    EW_species == "Lumbricus festivus" ~ "LFE",
-    EW_species == "Lumbricus terrestris" ~ "LT",
-    EW_species == "M. dubius " ~ "MD",
-    EW_species == "N. caliginosa " ~ "NCX",
-    EW_species == "N. caliginosus meridionalis " ~ "NCM",
-    EW_species == "N. terrestris terrestris " ~ "NG",
-    EW_species == "non identifie epige" ~ "EPI",
-    EW_species == "O. cyaneum " ~ "OC",
-    EW_species == "O. lacteum " ~ "OL",
-    EW_species == "Octolasium " ~ "OX",
-    EW_species == "Octolasium cyaneum" ~ "OC",
-    EW_species == "P. fragilis " ~ "PF",
+    EW_species == "A. chlorotica " ~ "Allolobophora_chlorotica_chlorotica",
+    EW_species == "A. cupulifera " ~ "Aporrectodea_cupulifera",
+    EW_species == "A. giardi " ~ "Aporrectodea_giardi",
+    EW_species == "A. longa " ~ "Aporrectodea_longa",
+    EW_species == "A. longa/giardi " ~ "Aporrectodea_longa/giardi",
+    EW_species == "A. muldali " ~ "Murchieona_muldali",
+    EW_species == "A. muldali/rosea " ~ "A._muldali/rosea",
+    EW_species == "A. rosea " ~ "Aporrectodea_rosea",
+    EW_species == "Allolobophora chlorotica" ~ "Allolobophora_chlorotica",
+    EW_species == "Allolobophora muldali" ~ "Murchieona_muldali", 
+    EW_species == "Anécique lumbricus " ~ "Lumbricus_indéterminable_anecic",
+    EW_species == "Aporrectodea caliginosa" ~ "Aporrectodea_caliginosa_indéterminable",
+    EW_species == "Aporrectodea giardi" ~ "Aporrectodea_giardi",
+    EW_species == "Aporrectodea icterica" ~ "Aporrectodea_icterica",
+    EW_species == "Aporrectodea longa" ~ "Aporrectodea_longa",
+    EW_species == "Aporrectodea rosea" ~ "Aporrectodea_rosea",
+    EW_species == "D. mammalis " ~ "Satchellius_mammalis",
+    EW_species == "D. pygmea " ~ "Dendrobaena_pygmea",
+    EW_species == "D. subrubicunda " ~ "Dendrodrilus_rubidus_subrubicundus",
+    EW_species == "E. tetraedra " ~ "Eiseniella_tetraedra",
+    EW_species == "Eisenia " ~ "Eisenia_indéterminable",
+    EW_species == "endoge indetermine " ~ "indéterminable_endogeic",
+    EW_species == "L. castaneus " ~ "Lumbricus_castaneus",
+    EW_species == "L. centralis " ~ "Lumbricus_centralis",
+    EW_species == "L. friendi " ~ "Lumbricus_friendi", 
+    EW_species == "L. friendi/centralis " ~ "Lumbricus_friendi/centralis",
+    EW_species == "L. rubellus friendoides " ~ "Lumbricus_rubellus_friendoides",
+    EW_species == "L. rubellus rubellus " ~ "Lumbricus_rubellus_rubellus",
+    EW_species == "Lumbricus castaneus" ~ "Lumbricus_castaneus",
+    EW_species == "Lumbricus festivus" ~ "Lumbricus_festivus",
+    EW_species == "Lumbricus terrestris" ~ "Lumbricus_terrestris",
+    EW_species == "M. dubius " ~ "Microscolex_dubius",
+    EW_species == "N. caliginosa " ~ "Aporrectodea_caliginosa_indéterminable",
+    EW_species == "N. caliginosus meridionalis " ~ "Aporrectodea_caliginosa_meridionalis",
+    EW_species == "N. terrestris terrestris " ~ "Aporrectodea_giardi",
+    EW_species == "non identifie epige" ~ "Indéterminable_epigeic",
+    EW_species == "O. cyaneum " ~ "Octolasion_cyaneum",
+    EW_species == "O. lacteum " ~ "Octolasion_lacteum_lacteum",
+    EW_species == "Octolasium " ~ "Octolasion_indéterminable",
+    EW_species == "Octolasium cyaneum" ~ "Octolasion_cyaneum",
+    EW_species == "P. fragilis " ~ "Prosellodrilus_fragilis_fragilis",
     TRUE ~ EW_species  # Si aucune condition n'est satisfaite, conservez la valeur d'origine
   )) %>%
   mutate(EW_species = as.factor(EW_species))
@@ -126,9 +130,7 @@ cp_rd_rep_site <- cp_rd_rep_site %>%
 
 cp_rd_rep_site <- cp_rd_rep_site %>%
   mutate(AB_tot = rowSums(select(., starts_with("AB_")), na.rm = TRUE)) %>%
-  mutate(BM_tot = rowSums(select(., starts_with("BM_")), na.rm = TRUE)) %>%
-  mutate(Richesse = rowSums(select(., starts_with("AB_")) > 0, na.rm = TRUE))
-
+  mutate(BM_tot = rowSums(select(., starts_with("BM_")), na.rm = TRUE))
 
 
 #### RENOMMER LES VARIABLES
@@ -146,53 +148,7 @@ cp_rd_rep_site <- cp_rd_rep_site %>%
   )
 
 
-#### HOMOGENEISATION DES COLONNES ####
-# List of desired column names
-desired_headers <- c(
-  "Programme", "Protocole", "Code_Methode", "Annee", "Date_Prelevement", "ID_Site",
-  "Code_Parcelle", "Site", "Parcelle", "Modalite", "Cadre", "Sous.cadre", "Bloc",
-  "Repetition", "CE.Deter.Terrain", "Deter.Code.Taxon", "Code_Taxon", "GF", "Stade",
-  "Incomplet", "Nbr_VDT", "Pds", "Pds_GF", "Commentaires"
-)
-
-# Function to homogenize column names and data types of a given data frame
-homogenize_dataframe <- function(df, desired_headers) {
-  # Check if the column names of the data frame match the desired headers
-  if (!identical(colnames(df), desired_headers)) {
-    # Filter and rearrange existing headers
-    existing_headers <- intersect(desired_headers, colnames(df))
-    df <- df[, existing_headers]
-    
-    # Add missing columns with NA values
-    missing_headers <- setdiff(desired_headers, colnames(df))
-    for (header in missing_headers) {
-      df[[header]] <- NA
-    }
-    
-    # Rearrange columns in the desired order
-    df <- df[, desired_headers]
-  }
-  
-  # Convert all columns (except for specific ones) to character type
-  columns_to_convert <- setdiff(colnames(df), c("Nbr_VDT", "Pds", "Pds_GF"))
-  for (col in columns_to_convert) {
-    df[[col]] <- as.character(df[[col]])
-  }
-  
-  # Convert specific columns to numeric
-  df$Nbr_VDT <- as.numeric(as.character(df$Nbr_VDT))
-  df$Pds <- as.numeric(as.character(df$Pds))
-  df$Pds_GF <- as.numeric(as.character(df$Pds_GF))
-  
-  return(df)
-}
-
-cp_rd_rep_site=homogenize_dataframe(cp_rd_rep_site, desired_headers)
-  
-cp_rd_rep_site <- cp_rd_rep_site %>%
-  mutate_at(vars(Programme, ID_Site, Annee, Modalite, Bloc), as.character)
-
-write.csv(cp_rd_rep_site, "[Database]/Raw datasets/cp_rd_rep_site.csv", row.names = FALSE)
+write.csv(cp_rd_rep_site, "[Database]/[Raw datasets]/EW_datasets/cp_rd_rep_site.csv", row.names = FALSE)
 
 
 
@@ -231,25 +187,25 @@ sheet_data_Sampling <- sheet_data_Sampling %>%
 
 
 # Effectuez les jointures en utilisant l'identifiant commun
-cp_meta <- sheet_data_Study %>%
+cp_description <- sheet_data_Study %>%
   left_join(sheet_data_Land_use_management, by = "ID_common") %>%
   left_join(sheet_data_Soil, by = "ID_common") %>%
   left_join(sheet_data_Sampling, by = "ID_common")
 
 
 # Supprimez la colonne ID_common si vous n'en avez plus besoin
-cp_meta <- cp_meta %>%
+cp_description <- cp_description %>%
   select(-ID_common)
 
 
 # Récupérez les noms des colonnes
-noms_colonnes <- colnames(cp_meta)
+noms_colonnes <- colnames(cp_description)
 
 # Affichez les noms des colonnes
 print(noms_colonnes)
 
 
-cp_meta <- cp_meta %>%
+cp_description <- cp_description %>%
   rename(
     Programme = project_acronym,
     Protocole = sampling_method_acronym,
@@ -262,8 +218,8 @@ cp_meta <- cp_meta %>%
     # Ajoutez autant de renommages que nécessaire
   )
 
-cp_meta <- cp_meta %>%
+cp_description <- cp_description %>%
   mutate_at(vars(Programme, ID_Site, Annee, Modalite, Bloc), as.character)
 
 
-write.csv(cp_meta, "[Database]/Raw datasets/descriptive_data/cp_meta.csv", row.names = FALSE)
+write.csv(cp_description, "[Database]/[Raw datasets]/Plot_description_datasets/cp_description.csv", row.names = FALSE)

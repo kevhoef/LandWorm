@@ -1,30 +1,41 @@
 #### PACKAGE LOADING ####
 library(tidyverse)
+library(readxl)
 
 #### FILE IMPORT #### 
+# Load the Taxa_list_fev2021 table
+taxa_list <- read_excel("[Database]/Taxa_list_fev2021.xlsx") %>%
+  select(Code_Taxon, Taxon)  # Select only Code_Taxon and Taxon columns
+
 # Specify the directory path containing the .csv files
 directory_path <- "[Database]/[Raw datasets]/EW_datasets"
 
 # List the .csv files in the specified directory
-# Files ending by "_rd" are raw data sets.
 csv_files <- list.files(directory_path, pattern = "*_rd.csv", full.names = TRUE)
 
-# Load the .csv files into the environment
+# Load the .csv files
 for (csv_file in csv_files) {
-  table_name <- tools::file_path_sans_ext(basename(csv_file))  # Table name based on the file name
+  table_name <- tools::file_path_sans_ext(basename(csv_file))  # Determine the table name based on the file name
   
-  # Read the .csv file with manually set colClasses
-  assign(
-    table_name,
-    read.csv(
-      csv_file,
-      stringsAsFactors = FALSE,
-      colClasses = "character",  # Specify all columns as character initially
-      na.strings = c("", "NA", "N/A", "null"),  # Specify NA values that can be in the data
-      dec = ",", # Specify that the decimal separator is a comma
-      row.names = NULL  # Avoid reading row names as a column
-    )
+  # Load the .csv file
+  data <- read.csv(
+    csv_file,
+    stringsAsFactors = FALSE,
+    colClasses = "character",  # Treat all columns as character initially
+    na.strings = c("", "NA", "N/A", "null"),  # Specify NA representations in the data
+    dec = ",",  # Set the decimal separator as comma
+    row.names = NULL  # Do not treat any column as row names
   )
+  
+  # Merge with taxa_list based on Code_Taxon
+  merged_data <- left_join(data, taxa_list, by = "Code_Taxon")
+  
+  # Replace NA in Taxon with Code_Taxon
+  merged_data <- merged_data %>% 
+    mutate(Taxon = ifelse(is.na(Taxon), Code_Taxon, Taxon))
+  
+  # Assign the result to a variable in the environment
+  assign(table_name, merged_data)
 }
 
 #### DATA HOMOGENISATION ####
@@ -34,30 +45,31 @@ for (csv_file in csv_files) {
 desired_headers <- c(
   "Programme", "Protocole","Code_Methode" ,"Annee", "Date_Prelevement", "ID_Site",
   "Code_Parcelle", "Site", "Parcelle", "Modalite", "Cadre", "Sous.cadre", "Bloc",
-  "Repetition", "CE.Deter.Terrain", "Deter.Code.Taxon", "Code_Taxon", "GF", "Stade",
-  "Incomplet", "Nbr_VDT", "Pds", "Pds_GF", "Commentaires"
+  "Repetition","Code_Taxon","Taxon", "Stade",
+  "Incomplet", "Nbr_VDT", "Pds", "Commentaires"
 )
 
 # Function to homogenize column names and data types of a given data frame
 homogenize_dataframe <- function(df, desired_headers) {
-  # Check if the column names of the data frame match the desired headers
-  if (!identical(colnames(df), desired_headers)) {
-    # Filter and rearrange existing headers
+  # Gérez les dataframes vides
+  if (ncol(df) == 0) {
+    df <- data.frame(matrix(ncol = length(desired_headers), nrow = 0))
+    colnames(df) <- desired_headers
+  } else {
+    # Assurez-vous que les colonnes désirées existent dans df
     existing_headers <- intersect(desired_headers, colnames(df))
-    df <- df[, existing_headers]
+    df <- df[, existing_headers, drop = FALSE]
     
-    # Add missing columns with NA values
+    # Ajoutez les colonnes manquantes
     missing_headers <- setdiff(desired_headers, colnames(df))
-    for (header in missing_headers) {
-      df[[header]] <- NA
-    }
+    df[missing_headers] <- NA
     
-    # Rearrange columns in the desired order
-    df <- df[, desired_headers]
+    # Réorganisez les colonnes
+    df <- df[, desired_headers, drop = FALSE]
   }
   
   # Convert all columns (except for specific ones) to character type
-  columns_to_convert <- setdiff(colnames(df), c("Nbr_VDT", "Pds", "Pds_GF"))
+  columns_to_convert <- setdiff(colnames(df), c("Nbr_VDT", "Pds"))
   for (col in columns_to_convert) {
     df[[col]] <- as.character(df[[col]])
   }
@@ -65,8 +77,7 @@ homogenize_dataframe <- function(df, desired_headers) {
   # Convert specific columns to numeric
   df$Nbr_VDT <- as.numeric(as.character(df$Nbr_VDT))
   df$Pds <- as.numeric(as.character(df$Pds))
-  df$Pds_GF <- as.numeric(as.character(df$Pds_GF))
-  
+
   # Translate the levels in the "Protocol" column in English
   if ("Protocole" %in% colnames(df)) {
     df$Protocole <- gsub("MTM", "M_HS", df$Protocole)
@@ -86,5 +97,6 @@ for (df_name in ls()) {
 
 #### IMPORT DATA ALREADY AGGREGATED (1 line = 1 plot) ####
 cp_rd_rep_site=read_csv("./[Database]/[Raw datasets]/EW_datasets/cp_rd_rep_site.csv")
+INPN_rd_rep_site=read_csv("./[Database]/[Raw datasets]/EW_datasets/INPN_rd_rep_site.csv")
 
 

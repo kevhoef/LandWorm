@@ -4,8 +4,8 @@ library(dplyr)
 # Get list of all objects in the environment
 all_objects <- ls()
 
-# Filter tables ending with "_meta" and "_rd_rep_site"
-meta_tables <- grep("_meta$", all_objects, value = TRUE)
+# Filter tables ending with "_description" and "_rd_rep_site"
+meta_tables <- grep("_description$", all_objects, value = TRUE)
 rd_rep_site_tables <- grep("_rd_rep_site$", all_objects, value = TRUE)
 
 # Create a list to store the merged tables
@@ -23,7 +23,7 @@ check_id_columns <- function(data) {
   return(TRUE)
 }
 
-# Function to perform the join between a "_rd_rep_site" table and a "_meta" table
+# Function to perform the join between a "_rd_rep_site" table and a "_description" table
 perform_join <- function(meta_table_name, rd_rep_site_table_name) {
   # Load the tables from the environment
   meta_data <- get(meta_table_name)
@@ -51,9 +51,9 @@ perform_join <- function(meta_table_name, rd_rep_site_table_name) {
 }
 
 
-# Iterate through the pairs of "_meta" and "_rd_rep_site" tables and perform the joins
+# Iterate through the pairs of "_description" and "_rd_rep_site" tables and perform the joins
 for (meta_table_name in meta_tables) {
-  rd_rep_site_table_name <- sub("_meta$", "_rd_rep_site", meta_table_name)
+  rd_rep_site_table_name <- sub("_description$", "_rd_rep_site", meta_table_name)
   if (rd_rep_site_table_name %in% rd_rep_site_tables) {
     new_table_name <- perform_join(meta_table_name, rd_rep_site_table_name)
     if (!is.null(new_table_name)) {

@@ -165,25 +165,25 @@ sheet_data_Sampling <- sheet_data_Sampling %>%
 
 
 # Effectuez les jointures en utilisant l'identifiant commun
-mh_meta <- sheet_data_Study %>%
+mh_description <- sheet_data_Study %>%
   left_join(sheet_data_Land_use_management, by = "ID_common") %>%
   left_join(sheet_data_Soil, by = "ID_common") %>%
   left_join(sheet_data_Sampling, by = "ID_common")
 
 
 # Supprimez la colonne ID_common si vous n'en avez plus besoin
-mh_meta <- mh_meta %>%
+mh_description <- mh_description %>%
   select(-ID_common)
 
 
 # Récupérez les noms des colonnes
-noms_colonnes <- colnames(mh_meta)
+noms_colonnes <- colnames(mh_description)
 
 # Affichez les noms des colonnes
-print(mh_meta)
+print(mh_description)
 
 
-mh_meta <- mh_meta %>%
+mh_description <- mh_description %>%
   rename(
     Programme = project_acronym,
     Protocole = sampling_method_acronym,
@@ -194,8 +194,8 @@ mh_meta <- mh_meta %>%
     ID_Site=ID_plot,
     )
 
-mh_meta <- mh_meta %>%
+mh_description <- mh_description %>%
   mutate_at(vars(Programme, ID_Site, Annee, Modalite, Bloc, Parcelle), as.character)
 
 
-write.csv(mh_meta, "[Database]/Raw datasets/descriptive_data/mh_meta.csv", row.names = FALSE)
+write.csv(mh_description, "[Database]/Raw datasets/descriptive_data/mh_description.csv", row.names = FALSE)

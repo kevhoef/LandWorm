@@ -3,7 +3,7 @@ library(tidyverse)
 directory_path <- "[Database]/[Raw datasets]/Plot_description_datasets"
 
 # List the .csv files in the specified directory
-csv_files <- list.files(directory_path, pattern = "*_meta.csv", full.names = TRUE)
+csv_files <- list.files(directory_path, pattern = "*_description.csv", full.names = TRUE)
 
 # Load and rename the .csv files into the environment
 for (csv_file in csv_files) {
@@ -17,9 +17,10 @@ for (csv_file in csv_files) {
     na.strings = c("", "NA", "N/A", "null")  # Specify NA values that can be in the data
   )
 
+
   # Rename specific columns
   if ("Protocole" %in% colnames(data)) {
-    colnames(data)[colnames(data) == "Protocole"] <- "Protocole_meta"
+    colnames(data)[colnames(data) == "Protocole"] <- "Protocole_description"
   }
   if ("GPS_X" %in% colnames(data)) {
     colnames(data)[colnames(data) == "GPS_X"] <- "gps_x"
@@ -38,16 +39,16 @@ for (csv_file in csv_files) {
     colnames(data)[colnames(data) == "altitude"] <- "Altitude"
   }
   if ("Categorie_Milieu_Niv1" %in% colnames(data)) {
-    colnames(data)[colnames(data) == "Categorie_Milieu_Niv1"] <- "land_use_lvl1"
+    colnames(data)[colnames(data) == "Categorie_Milieu_Niv1"] <- "clcm_lvl1"
   }
   if ("SousCategorie_Milieu_Niv2" %in% colnames(data)) {
-    colnames(data)[colnames(data) == "SousCategorie_Milieu_Niv2"] <- "land_use_lvl2"
+    colnames(data)[colnames(data) == "SousCategorie_Milieu_Niv2"] <- "clcm_lvl2"
   }
   if ("Details_Milieu_Niv3" %in% colnames(data)) {
-    colnames(data)[colnames(data) == "Details_Milieu_Niv3"] <- "land_use_lvl3"
+    colnames(data)[colnames(data) == "Details_Milieu_Niv3"] <- "clcm_lvl3"
   }
   if ("Specificites_Parcelle_Niv4" %in% colnames(data)) {
-    colnames(data)[colnames(data) == "Specificites_Parcelle_Niv4"] <- "land_use_detail"
+    colnames(data)[colnames(data) == "Specificites_Parcelle_Niv4"] <- "land_cover_detail"
   }
   if ("SableF" %in% colnames(data)) {
     colnames(data)[colnames(data) == "SableF"] <- "fine_sand"
@@ -324,44 +325,44 @@ for (csv_file in csv_files) {
 
   
   
-  # Replace spaces with underscores in land_use_lvl2 column
-  if ("land_use_lvl2" %in% colnames(data)) {
-    data$land_use_lvl2 <- gsub(" ", "_", data$land_use_lvl2)
+  # Replace spaces with underscores in clcm_lvl2 column
+  if ("clcm_lvl2" %in% colnames(data)) {
+    data$clcm_lvl2 <- gsub(" ", "_", data$clcm_lvl2)
     
     # Additional replacements
-    data$land_use_lvl2 <- gsub("22_Agricole_Boisé", "22_Agricole_boisé", data$land_use_lvl2)
-    data$land_use_lvl2 <- gsub("23_Bord_de_champ", "23_Bord_de_champs", data$land_use_lvl2)
-    data$land_use_lvl2 <- gsub("31_Espace_vert_fermé", "31_Espace_vert_boisé", data$land_use_lvl2)
-    data$land_use_lvl2 <- gsub("33_Espace_vert_ouverts", "32_Espace_vert_ouvert", data$land_use_lvl2)
-    data$land_use_lvl2 <- gsub("32_Espace_vert_ouverts", "32_Espace_vert_ouvert", data$land_use_lvl2)
-    data$land_use_lvl2 <- gsub("33_Espace_vert_ouverts", "32_Espace_vert_ouvert", data$land_use_lvl2)
-    data$land_use_lvl2 <- gsub("32_Espaces_verts_ouverts", "32_Espace_vert_ouvert", data$land_use_lvl2)
-    data$land_use_lvl2 <- gsub("33_Espace_vert_ouvert", "32_Espace_vert_ouvert", data$land_use_lvl2)
+    data$clcm_lvl2 <- gsub("22_Agricole_Boisé", "22_Agricole_boisé", data$clcm_lvl2)
+    data$clcm_lvl2 <- gsub("23_Bord_de_champ", "23_Bord_de_champs", data$clcm_lvl2)
+    data$clcm_lvl2 <- gsub("31_Espace_vert_fermé", "31_Espace_vert_boisé", data$clcm_lvl2)
+    data$clcm_lvl2 <- gsub("33_Espace_vert_ouverts", "32_Espace_vert_ouvert", data$clcm_lvl2)
+    data$clcm_lvl2 <- gsub("32_Espace_vert_ouverts", "32_Espace_vert_ouvert", data$clcm_lvl2)
+    data$clcm_lvl2 <- gsub("33_Espace_vert_ouverts", "32_Espace_vert_ouvert", data$clcm_lvl2)
+    data$clcm_lvl2 <- gsub("32_Espaces_verts_ouverts", "32_Espace_vert_ouvert", data$clcm_lvl2)
+    data$clcm_lvl2 <- gsub("33_Espace_vert_ouvert", "32_Espace_vert_ouvert", data$clcm_lvl2)
     
   }
   
-  if ("land_use_lvl3" %in% colnames(data)) {
-    data$land_use_lvl3 <- gsub(" ", "_", data$land_use_lvl3)
+  if ("clcm_lvl3" %in% colnames(data)) {
+    data$clcm_lvl3 <- gsub(" ", "_", data$clcm_lvl3)
     
-    data$land_use_lvl3 <- gsub('210_Prairie_agricole_permanente?', "210_Prairie_agricole_permanente", data$land_use_lvl3)
-    data$land_use_lvl3 <- gsub('216_Maraichage_et_légumes_plein_champs', "216_Maraîchage_et_légume_plein_champ", data$land_use_lvl3)
-    data$land_use_lvl3 <- gsub('216l_Légume_plein_champ', "216l_Légume_plein_champ", data$land_use_lvl3)
-    data$land_use_lvl3 <- gsub('216_Légume_plein_champ', "216l_Légume_plein_champ", data$land_use_lvl3)
-    data$land_use_lvl3 <- gsub("218_Culture_anuelle", "214_Culture_annuelle", data$land_use_lvl3)
-    data$land_use_lvl3 <- gsub('218_Culture_perenne', "218_Vignes_et_autres_Cultures_pérennes", data$land_use_lvl3)
-    data$land_use_lvl3 <- gsub('218_Culture_perenne_Vignes', "218_Vignes_et_autres_Cultures_pérennes", data$land_use_lvl3)
-    data$land_use_lvl3 <- gsub('218_Cultures_pérennes', "218_Vignes_et_autres_Cultures_pérennes", data$land_use_lvl3)
-    data$land_use_lvl3 <- gsub('218_Vignes_et_autres_Cultures_pérennes_Vignes', "218_Vignes_et_autres_Cultures_pérennes", data$land_use_lvl3)
-    data$land_use_lvl3 <- gsub("Grasslands", "231_Prairies", data$land_use_lvl3)
-    data$land_use_lvl3 <- gsub('210_Prairie_agricole_permanente?', "210_Prairie_agricole_permanente", data$land_use_lvl3)
-    data$land_use_lvl3 <- gsub('111_Forêt_feuillus', "111_Forêt_de_feuillus", data$land_use_lvl3)
-    data$land_use_lvl3 <- gsub('113_Foret_mixte', "113_Forêt_mixte", data$land_use_lvl3)
-    data$land_use_lvl3 <- gsub('115_Autres', "115_Autre", data$land_use_lvl3)
-    data$land_use_lvl3 <- gsub('121_Prairie_naturelle', "121_Prairie_naturelle_&_Paturage", data$land_use_lvl3)
-    data$land_use_lvl3 <- gsub('121_Prairie_naturelle_&_Paturage_&_Paturage', "121_Prairie_naturelle_&_Paturage", data$land_use_lvl3)
-    data$land_use_lvl3 <- gsub('320_Pelouse_urbaine', "321_Pelouse_urbaine", data$land_use_lvl3)
-    data$land_use_lvl3 <- gsub('322_Pelouse_urbaine', "321_Pelouse_urbaine", data$land_use_lvl3)
-    data$land_use_lvl3 <- gsub('320_Pelouse_urbaine', "321_Pelouse_urbaine", data$land_use_lvl3)
+    data$clcm_lvl3 <- gsub('210_Prairie_agricole_permanente?', "210_Prairie_agricole_permanente", data$clcm_lvl3)
+    data$clcm_lvl3 <- gsub('216_Maraichage_et_légumes_plein_champs', "216_Maraîchage_et_légume_plein_champ", data$clcm_lvl3)
+    data$clcm_lvl3 <- gsub('216l_Légume_plein_champ', "216l_Légume_plein_champ", data$clcm_lvl3)
+    data$clcm_lvl3 <- gsub('216_Légume_plein_champ', "216l_Légume_plein_champ", data$clcm_lvl3)
+    data$clcm_lvl3 <- gsub("218_Culture_anuelle", "214_Culture_annuelle", data$clcm_lvl3)
+    data$clcm_lvl3 <- gsub('218_Culture_perenne', "218_Vignes_et_autres_Cultures_pérennes", data$clcm_lvl3)
+    data$clcm_lvl3 <- gsub('218_Culture_perenne_Vignes', "218_Vignes_et_autres_Cultures_pérennes", data$clcm_lvl3)
+    data$clcm_lvl3 <- gsub('218_Cultures_pérennes', "218_Vignes_et_autres_Cultures_pérennes", data$clcm_lvl3)
+    data$clcm_lvl3 <- gsub('218_Vignes_et_autres_Cultures_pérennes_Vignes', "218_Vignes_et_autres_Cultures_pérennes", data$clcm_lvl3)
+    data$clcm_lvl3 <- gsub("Grasslands", "231_Prairies", data$clcm_lvl3)
+    data$clcm_lvl3 <- gsub('210_Prairie_agricole_permanente?', "210_Prairie_agricole_permanente", data$clcm_lvl3)
+    data$clcm_lvl3 <- gsub('111_Forêt_feuillus', "111_Forêt_de_feuillus", data$clcm_lvl3)
+    data$clcm_lvl3 <- gsub('113_Foret_mixte', "113_Forêt_mixte", data$clcm_lvl3)
+    data$clcm_lvl3 <- gsub('115_Autres', "115_Autre", data$clcm_lvl3)
+    data$clcm_lvl3 <- gsub('121_Prairie_naturelle', "121_Prairie_naturelle_&_Paturage", data$clcm_lvl3)
+    data$clcm_lvl3 <- gsub('121_Prairie_naturelle_&_Paturage_&_Paturage', "121_Prairie_naturelle_&_Paturage", data$clcm_lvl3)
+    data$clcm_lvl3 <- gsub('320_Pelouse_urbaine', "321_Pelouse_urbaine", data$clcm_lvl3)
+    data$clcm_lvl3 <- gsub('322_Pelouse_urbaine', "321_Pelouse_urbaine", data$clcm_lvl3)
+    data$clcm_lvl3 <- gsub('320_Pelouse_urbaine', "321_Pelouse_urbaine", data$clcm_lvl3)
     
   }  
   
@@ -371,8 +372,8 @@ for (csv_file in csv_files) {
 
 
 
-# Identifiez les noms de variables qui se terminent par "_meta"
-tableaux_final <- ls(pattern = "_meta$")
+# Identifiez les noms de variables qui se terminent par "_description"
+tableaux_final <- ls(pattern = "_description$")
 
 # Fonction pour homogénéiser chaque dataframe
 homogenize_dataframe <- function(df) {
@@ -384,7 +385,7 @@ homogenize_dataframe <- function(df) {
   cols_to_keep <- c(
     "Programme","Annee", "Date_Prelevement", "ID_Site", "Modalite", "Bloc",
     "postal_code",	"gps_x",	"gps_y",	"Altitude",	"Climate Zone",
-    "land_use_lvl1",	"land_use_lvl2",	"land_use_lvl3", "land_use_detail",
+    "clcm_lvl1",	"clcm_lvl2",	"clcm_lvl3", "land_cover_detail",
     "ph_kcl",	"ph_eau",	"c_tot",	"c_org",	"n_tot",	"c/n",	"om",	"cu_tot",	"cu_EDTA",	"soil_temperature",	"soil_humidity",	"fine_sand",	"coarse_sand",	"sand",	"fine_silt",	"coarse_silt",	"silt",	"clay",
     "type_tillage",	"tillage_depth",	"tillage_frequency_intra",	"tillage_frequency_inter",	"tillage_date",	
     "fertilisation",	"ferti_min_product",	"ferti_min_qtty",	"ferti_orga_product",	"ferti_orga_qtty",	"ferti_orga_freq",	

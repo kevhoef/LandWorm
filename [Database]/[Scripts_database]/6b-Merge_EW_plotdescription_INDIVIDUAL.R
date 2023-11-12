@@ -4,8 +4,8 @@ library(dplyr)
 # Get list of all objects in the environment
 all_objects <- ls()
 
-# Filter tables ending with "_meta" and "_rd"
-meta_tables <- grep("_meta$", all_objects, value = TRUE)
+# Filter tables ending with "_description" and "_rd"
+meta_tables <- grep("_description$", all_objects, value = TRUE)
 rd_tables <- grep("_rd$", all_objects, value = TRUE)
 
 # Create a list to store the merged tables
@@ -23,7 +23,7 @@ check_id_columns <- function(data) {
   return(TRUE)
 }
 
-# Function to perform the join between a "_rd" table and a "_meta" table
+# Function to perform the join between a "_rd" table and a "_description" table
 perform_join <- function(meta_table_name, rd_table_name) {
   # Load the tables from the environment
   meta_data <- get(meta_table_name)
@@ -51,9 +51,9 @@ perform_join <- function(meta_table_name, rd_table_name) {
 }
 
 
-# Iterate through the pairs of "_meta" and "_rd" tables and perform the joins
+# Iterate through the pairs of "_description" and "_rd" tables and perform the joins
 for (meta_table_name in meta_tables) {
-  rd_table_name <- sub("_meta$", "_rd", meta_table_name)
+  rd_table_name <- sub("_description$", "_rd", meta_table_name)
   if (rd_table_name %in% rd_tables) {
     new_table_name <- perform_join(meta_table_name, rd_table_name)
     if (!is.null(new_table_name)) {
@@ -70,16 +70,16 @@ LandWorm_dataset_individuals <- bind_rows(fusioned_tables)
 
 library(dplyr)
 
-# Création de l'identifiant dans le tableau sbt_m_meta
-sbt_m_meta <- sbt_m_meta %>%
+# Création de l'identifiant dans le tableau sbt_m_description
+sbt_m_description <- sbt_m_description %>%
   mutate(ID = as.character(paste(Programme, ID_Site, Annee, Modalite, Bloc, sep = "_")))
-sbt_m_meta$ID
+sbt_m_description$ID
 # Création de l'identifiant dans le tableau sbt_m_rd_rep_site
 sbt_m_rd_rep_site <- sbt_m_rd_rep_site %>%
   mutate(ID = as.character(paste(Programme, ID_Site, Annee, Modalite, Bloc, sep = "_")))
 
 # Jointure des tableaux sur la colonne ID
-joined_table <- inner_join(sbt_m_meta, sbt_m_rd_rep_site, by = "ID")
+joined_table <- inner_join(sbt_m_description, sbt_m_rd_rep_site, by = "ID")
 
 # Affichage des premières lignes de la table jointe pour vérifier
 head(joined_table)
