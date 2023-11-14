@@ -401,7 +401,7 @@ homogenize_dataframe <- function(df) {
   
   # Filtrer les colonnes pour ne garder que celles qui existent dans le dataframe
   df <- df %>%
-    select(all_of(cols_to_keep))
+    dplyr::select(all_of(cols_to_keep))
   
   return(df)
 }

@@ -38,7 +38,7 @@ perform_join <- function(meta_table_name, rd_rep_site_table_name) {
   # Create the identifier as a string while accounting for NAs
   meta_data$ID <- with(meta_data, as.character(paste(Programme, ID_Site, Annee, Modalite, Bloc, sep = "_")))
   rd_rep_site_data$ID <- with(rd_rep_site_data, as.character(paste(Programme, ID_Site, Annee, Modalite, Bloc, sep = "_")))
-  rd_rep_site_data <- rd_rep_site_data %>% select(-Programme, -ID_Site, -Annee, -Modalite, -Bloc)
+  rd_rep_site_data <- rd_rep_site_data %>% dplyr::select(-Programme, -ID_Site, -Annee, -Modalite, -Bloc)
   
   # Perform the join using left_join
   joined_data <- right_join(meta_data, rd_rep_site_data, by = "ID", keep = FALSE)

@@ -174,7 +174,7 @@ if (!is.null(data_VDT_input$Taxon)) {
   
   # Delete the ID column
   T_synth_rep_output <- T_synth_rep_output %>% 
-    select(-ID)
+    dplyr::select(-ID)
   
   # Assign the final data frame in the environment
   assign(nom_tab, T_synth_rep_output, envir=parent.frame()) 

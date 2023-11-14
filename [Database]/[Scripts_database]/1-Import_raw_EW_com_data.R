@@ -5,7 +5,7 @@ library(readxl)
 #### FILE IMPORT #### 
 # Load the Taxa_list_fev2021 table
 taxa_list <- read_excel("[Database]/Taxa_list_fev2021.xlsx") %>%
-  select(Code_Taxon, Taxon)  # Select only Code_Taxon and Taxon columns
+  dplyr::select(Code_Taxon, Taxon)  # Select only Code_Taxon and Taxon columns
 
 # Specify the directory path containing the .csv files
 directory_path <- "[Database]/[Raw datasets]/EW_datasets"

@@ -17,7 +17,7 @@ mean_by_identifier <- function(data) {
       dplyr::summarise(across(where(is.numeric), ~mean(., na.rm = TRUE)),
                        across(where(is.factor), ~first(.)),
                        .groups = "drop") %>%
-      select(-Repetition) -> new_data
+      dplyr::select(-Repetition) -> new_data
     
     # Create the new table name with "_site"
     new_table_name <- paste(deparse(substitute(data)), "_site", sep = "")

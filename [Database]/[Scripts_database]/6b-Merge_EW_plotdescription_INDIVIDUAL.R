@@ -65,24 +65,5 @@ for (meta_table_name in meta_tables) {
 # Perform a vertical join using bind_rows()
 LandWorm_dataset_individuals <- bind_rows(fusioned_tables)
 
-
-
-
-library(dplyr)
-
-# Création de l'identifiant dans le tableau sbt_m_description
-sbt_m_description <- sbt_m_description %>%
-  mutate(ID = as.character(paste(Programme, ID_Site, Annee, Modalite, Bloc, sep = "_")))
-sbt_m_description$ID
-# Création de l'identifiant dans le tableau sbt_m_rd_rep_site
-sbt_m_rd_rep_site <- sbt_m_rd_rep_site %>%
-  mutate(ID = as.character(paste(Programme, ID_Site, Annee, Modalite, Bloc, sep = "_")))
-
-# Jointure des tableaux sur la colonne ID
-joined_table <- inner_join(sbt_m_description, sbt_m_rd_rep_site, by = "ID")
-
-# Affichage des premières lignes de la table jointe pour vérifier
-head(joined_table)
-
-# Vous pouvez ensuite sauvegarder cette table si nécessaire :
-# write.csv(joined_table, "chemin/vers/votre/fichier_joint.csv", row.names = FALSE)
+library(writexl)
+write.csv(LandWorm_dataset_individuals,"./[Database]/LandWorm_dataset_individuals.csv")

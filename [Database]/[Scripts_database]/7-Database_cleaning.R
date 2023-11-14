@@ -1,7 +1,7 @@
 ##############################################################
 ####### Changing the nature of numerical variables ########
 ##############################################################
-LandWorm_dataset_site_m <- LandWorm_dataset_site %>%
+LandWorm_dataset_individuals_m <- LandWorm_dataset_individuals %>%
   dplyr::mutate(across(c(gps_x, gps_y, Altitude, ph_kcl, ph_eau, c_tot, c_org, n_tot, om,
                          cu_tot, cu_EDTA, soil_temperature, soil_humidity, fine_sand, coarse_sand, sand,
                          fine_silt, coarse_silt, silt, clay), ~ as.numeric(gsub("[^0-9.]", "", .))))
@@ -12,7 +12,7 @@ LandWorm_dataset_site_m <- LandWorm_dataset_site %>%
 ####### Correction of CLC according to classification ########
 ##############################################################
 #### CLC LVL 1 ####
-LandWorm_dataset_site_m <- LandWorm_dataset_site_m %>%
+LandWorm_dataset_individuals_m <- LandWorm_dataset_individuals_m %>%
   mutate(clc_lvl3 = case_when(
     clcm_lvl3 %in% c("214_Culture_annuelle","214c_Culture_annuelle") ~ "211_Arable land*",
     clcm_lvl3 %in% c("218_Vignes_et_autres_Cultures_pérennes") ~ "221_Vineyards",
@@ -37,7 +37,7 @@ LandWorm_dataset_site_m <- LandWorm_dataset_site_m %>%
   ))
 
 #### CLC LVL 2 ####
-LandWorm_dataset_site_m <- LandWorm_dataset_site_m %>%
+LandWorm_dataset_individuals_m <- LandWorm_dataset_individuals_m %>%
   mutate(clc_lvl2 = case_when(
     clcm_lvl3 %in% c("214_Culture_annuelle","214c_Culture_annuelle") ~ "21_Arable land",
     clcm_lvl3 %in% c("218_Vignes_et_autres_Cultures_pérennes", "221_Arboriculture","221_Verger","312_Verger") ~ "22_Permanent crops",
@@ -55,7 +55,7 @@ LandWorm_dataset_site_m <- LandWorm_dataset_site_m %>%
   ))
 
 #### CLC LVL 3 ####
-LandWorm_dataset_site_m <- LandWorm_dataset_site_m %>%
+LandWorm_dataset_individuals_m <- LandWorm_dataset_individuals_m %>%
   mutate(clc_lvl1 = case_when(
     clcm_lvl3 %in% c("Prairie_agricole","223_Autre","219_Autre","214_Culture_annuelle","214c_Culture_annuelle","218_Vignes_et_autres_Cultures_pérennes", "221_Arboriculture","221_Verger","312_Verger","220ir_Agroforesterie", "220r_Agroforesterie", "210_Prairie_agricole_permanente", "211_Prairie_agricole_temporaire","210_Prairie_agricole_permanente?","121_Prairie_naturelle_&_Paturage", "131_Mégaphorbiaie","231_Prairies","Prairie agricole","212_Jachère","215_Interculture","232_Haies","213_Bande_enherbée","216l_Légume_plein_champ","216_Maraîchage_et_légume_plein_champ","230_Talus_et_bordure_enherbés","217_Serre,_tunnel_fixe","232_Haie","216m_Maraichage") ~ "2_Agricultural areas",
     clcm_lvl3 %in% c("115_Autre","124_Plage,_dune_et_sable","130_Prairie_humide","111_Forêt_de_feuillus","113_Forêt_mixte","310_Forêt_urbaine","112_Forêt_de_conifères","114c_Bois_ou_forêt_contaminé", "114_Bois","311_Bois_urbain","132_Lande_hygrophile","122_Lande_mésophile_et_broussailles","120_Végétation_clairsemée") ~ "3_Forest and semi natural areas",
@@ -68,7 +68,7 @@ LandWorm_dataset_site_m <- LandWorm_dataset_site_m %>%
 #########################################
 
 #Calculation of total sand and silt from finer fractions
-LandWorm_dataset_site_m <- LandWorm_dataset_site_m %>%
+LandWorm_dataset_individuals_m <- LandWorm_dataset_individuals_m %>%
   mutate(
     sand = if_else(is.na(sand) & !is.na(fine_sand) & !is.na(coarse_sand),
                    fine_sand + coarse_sand, 
@@ -79,7 +79,7 @@ LandWorm_dataset_site_m <- LandWorm_dataset_site_m %>%
 
 
 #Transformation of the unit to get %
-LandWorm_dataset_site_m <- LandWorm_dataset_site_m %>%
+LandWorm_dataset_individuals_m <- LandWorm_dataset_individuals_m %>%
   # First condition for dividing by 10 if the sum exceeds 900
   dplyr::mutate(total_1 = fine_sand + coarse_sand + fine_silt + coarse_silt + clay,
          across(c(fine_sand, coarse_sand, fine_silt, coarse_silt, clay, silt, sand),
@@ -102,7 +102,7 @@ LandWorm_dataset_site_m <- LandWorm_dataset_site_m %>%
 ###########################################
 #### GRAPHIQUES TEXTURE = A SUPPRIMER #####
 # Données de texture du sol
-texture_data <- na.omit(LandWorm_dataset_site_m[, c("sand", "silt", "clay")])%>%
+texture_data <- na.omit(LandWorm_dataset_individuals_m[, c("sand", "silt", "clay")])%>%
   mutate(total = clay + silt + sand)%>%
   mutate(clay = (clay / total) * 100,
          silt = (silt / total) * 100,
