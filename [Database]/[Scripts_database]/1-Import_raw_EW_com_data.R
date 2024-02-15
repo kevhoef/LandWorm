@@ -3,9 +3,13 @@ library(tidyverse)
 library(readxl)
 
 #### FILE IMPORT #### 
+# Initialiser un vecteur pour stocker les messages concernant les Code_Taxon sans correspondance
+unmatched_messages <- character()
+
 # Load the Taxa_list_fev2021 table
-taxa_list <- read_excel("[Database]/Taxa_list_fev2021.xlsx") %>%
+taxa_list <- read_excel("[Database]/[Raw Datasets]/T_TAXONOMIE_v2024.02.09.xlsx") %>%
   dplyr::select(Code_Taxon, Taxon)  # Select only Code_Taxon and Taxon columns
+
 
 # Specify the directory path containing the .csv files
 directory_path <- "[Database]/[Raw datasets]/EW_datasets"
@@ -27,16 +31,35 @@ for (csv_file in csv_files) {
     row.names = NULL  # Do not treat any column as row names
   )
   
+  # Supprimer les "?" dans Code_Taxon
+  data$Code_Taxon <- gsub("\\?", "", data$Code_Taxon)
+  
   # Merge with taxa_list based on Code_Taxon
   merged_data <- left_join(data, taxa_list, by = "Code_Taxon")
+
+  # Identifier les Code_Taxon sans correspondance dans les deux colonnes
+  no_match <- unique(merged_data$Code_Taxon[is.na(merged_data$Taxon) & !merged_data$Code_Taxon %in% taxa_list$Taxon])
   
-  # Replace NA in Taxon with Code_Taxon
-  merged_data <- merged_data %>% 
-    mutate(Taxon = ifelse(is.na(Taxon), Code_Taxon, Taxon))
+  # Vérifier si des Code_Taxon sans correspondance ont été identifiés et les ajouter aux messages
+  if (length(no_match) > 0) {
+    unmatched_msg <- paste("Dans", table_name, "les Code_Taxon non trouvés sont:", paste(no_match, collapse = ", "))
+    unmatched_messages <- c(unmatched_messages, unmatched_msg)
+  }
   
-  # Assign the result to a variable in the environment
+  # Assigner le résultat à une variable dans l'environnement
   assign(table_name, merged_data)
 }
+
+# Vérifier si des messages sur les Code_Taxon sans correspondance ont été générés
+if (length(unmatched_messages) == 0) {
+  message("Tous les taxons ont trouvé correspondance.")
+} else {
+  message("Des problèmes ont été identifiés avec certains Code_Taxon :")
+  for (msg in unmatched_messages) {
+    message(msg)
+  }
+}
+
 
 #### DATA HOMOGENISATION ####
 # useful for processing data and aggregating tables afterwards

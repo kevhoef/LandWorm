@@ -25,10 +25,10 @@ Create_T_Brut_Final <- function(data_VDT_input, table_name) {
         Code_Methode == "AITC_11.1111111111111" ~ 11.1111111111111 * Nbr_VDT,
         Code_Methode == "TB" ~ 25 * Nbr_VDT,
         Code_Methode == "HSAITC_6.25" ~ 6.25 * Nbr_VDT,
-        Code_Methode %in% c("AITCTM", "HSAITC_16","HS_16") ~ 16 * Nbr_VDT,
+        Code_Methode %in% c("AITCTM", "HSAITC_16","HS_16", "AITC_16", "TM_16", "M_16", "TMAITC_16") ~ 16 * Nbr_VDT,
         Code_Methode == "TM" & (is.null(Cadre) | is.na(Cadre)) ~ 16 * Nbr_VDT,
         Code_Methode == "TM" & Cadre %in% c("IR", "R") ~ 8 * Nbr_VDT,
-        TRUE ~ as.numeric(NA)
+        TRUE ~ as.numeric(0)
       )
     )
   
@@ -43,10 +43,11 @@ Create_T_Brut_Final <- function(data_VDT_input, table_name) {
           Code_Methode == "HSAITC_7.95775385" ~ 7.95775385 * Pds,
           Code_Methode == "TB" ~ 25 * Pds,
           Code_Methode == "HSAITC_6.25" ~ 6.25 * Pds,
-          Code_Methode %in% c("AITCTM", "HSAITC_16","HS_16") ~ 16 * Pds,
+          Code_Methode %in% c("AITCTM", "HSAITC_16","HS_16", "AITC_16", "TM_16", "M_16", "TMAITC_16") ~ 16 * Pds,
           Code_Methode == "TM" & (is.null(Cadre) | is.na(Cadre)) ~ 16 * Pds,
           Code_Methode == "TM" & Cadre %in% c("IR", "R") ~ 8 * Pds,
-          TRUE ~ as.numeric(NA)
+          Code_Methode == NA ~ 0 * Pds,
+          TRUE ~ as.numeric(0)
         )
       )
   }

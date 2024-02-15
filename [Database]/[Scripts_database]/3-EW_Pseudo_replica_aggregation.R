@@ -10,13 +10,15 @@ Create_T_synth_rep <- function( data_VDT_input, nom_tab){
   #Identification variable
   Variable_Bandeau <- c("Programme", "Protocole" ,"ID_Site", "Code_Parcelle" ,"Annee", "Modalite", "Bloc", "Repetition")#, "Cadre" j'enleve car cadre est situ? ? l'int?rieur d'une r?p?tition
   
-  #Transformation of variables into factors
-  data_VDT_input$Programme <- factor(data_VDT_input$Programme) 
-  data_VDT_input$Protocole <- factor(data_VDT_input$Protocole) 
-  data_VDT_input$Annee <- factor(data_VDT_input$Annee) 
-  data_VDT_input$ID_Site <- factor(data_VDT_input$ID_Site) 
-  data_VDT_input$Repetition <- factor(data_VDT_input$Repetition)  
-  data_VDT_input$Taxon <- factor(data_VDT_input$Taxon)  
+  data_VDT_input[data_VDT_input == "NA"] <- NA
+  
+  # Convert columns to factors
+  data_VDT_input$Programme <- factor(data_VDT_input$Programme)
+  data_VDT_input$Protocole <- factor(data_VDT_input$Protocole)
+  data_VDT_input$Annee <- factor(data_VDT_input$Annee)
+  data_VDT_input$ID_Site <- factor(data_VDT_input$ID_Site)
+  data_VDT_input$Repetition <- factor(data_VDT_input$Repetition)
+  data_VDT_input$Taxon <- factor(data_VDT_input$Taxon)
 
   # Create an ID by pasting together the values of columns specified in Variable_Bandeau
   data_VDT_input <- data_VDT_input %>%
@@ -222,3 +224,4 @@ for (table_name in data_frames_names) {
     assign(table_name, output_tables_list[[table_name]], envir = .GlobalEnv)
   }
 }
+
